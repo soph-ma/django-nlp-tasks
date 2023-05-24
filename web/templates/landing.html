@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLP Tools</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+</head>
+
+{% include 'header.html' %}
+
+<body>
+
+    <section id="description-container">
+        <section id="description">
+            <table>
+                <tr>
+                    <td style="padding-right: 20px;" class="column1">
+                        <p>You've probably found this page because you love NLP. I love it too! Here I will show you some tools I've created for solving language-related problems. I have used <span style="color: rgb(156, 255, 199)">Python</span> and such libraries and frameworks as <span style="color: rgb(156, 247, 255)">nltk</span>, 
+                            <span style="color: rgb(230, 255, 156)">pytorch</span>, <span style="color: rgb(255, 188, 242)">scikit-learn</span> and others.</p>
+                    </td>
+                    <td class="column2" style="padding-right: 40px;">
+                        <img src="static/img/desk.jpg" alt="A person studying."/>
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </section>
+    
+    <section>
+    <h2>Try these out:</h2>
+        <div class="buttons">
+            <form method="GET" action="{% url 'frequencies' %}">
+                <button class="button" type="submit">Word frequencies</button>
+            </form>
+            <form method="GET" action="{% url 'summarization' %}">
+                <button class="button" type="submit">Text Summarization</button>
+            </form>
+            <form method="GET" action="{% url 'lang_detection' %}">
+                <button class="button" type="submit">Language detection</button>
+            </form>
+            <form method="GET" action="{% url 'keywords' %}">
+                <button class="button" type="submit">Keywords extraction</button>
+            </form>
+        </div>
+    </section>
+    <br>
+    
+    
+{% include 'footer.html' %}
+</body>
+</html>

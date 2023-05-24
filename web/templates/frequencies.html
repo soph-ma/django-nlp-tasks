@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word frequencies</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+</head>
+
+<body id="main-body">
+    {% include 'header.html' %}
+
+    <h1>Word frequencies</h1>
+
+    <section id="description-container">
+        <section id="description">
+            <table>
+                <tr>
+                    <td style="padding-right: 20px;" class="column1">
+                        <div>
+                            <h3>Enter your text:</h3>
+                            <form method="post" action="{% url 'get_freq_dict' %}">
+                                <textarea type="text" id="text-field" name="text-field" style="width: 500px; height: 200px;" rows="4" cols="50" wrap="soft"></textarea>
+                                <input class="button" type="submit" value="Get word frequencies">
+                            </form>
+                        </div>
+                    </td>
+                    <td class="column2" style="padding-right: 40px;">
+                        <div id="description">
+                            <p>Frequency dictionary means represenation of how many times a word is encountered in a text. This tool is created using the <span style="color: #95c6ff">nltk</span>, more specifically - FreqDist class from this library.</p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </section>
+
+    {% include 'footer.html' %}
+
+    <!-- modal popup -->
+    <div id="result-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p style="color: #08357d">Word frequencies:</p>
+            <p id="result" style="font-weight: normal;"></p>
+        </div>
+    </div>
+
+    <script>
+        var modal = document.getElementById("result-modal");
+        var closeBtn = document.getElementsByClassName("close")[0];
+        var form = document.querySelector("form");
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var frequencies = JSON.parse(xhr.responseText).frequencies;
+                        document.getElementById("result").textContent = frequencies;
+                        modal.style.display = "block"; // Show the popup
+                    } else {
+                        console.log("Request failed with status: " + xhr.status);
+                    }
+                }
+            };
+
+            // ajax request
+            xhr.open("POST", "{% url 'get_freq_dict' %}");
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            var formData = new FormData(this);
+            xhr.send(formData);
+        });
+
+        // closing the popup if close button is clicked
+        closeBtn.onclick = function() {
+            modal.style.display = "    none";
+        };
+
+        // or when the user clicks outside the box
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+    </script>
+</body>
+</html>
+

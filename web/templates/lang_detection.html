@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Detection</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+</head>
+
+<body id="main-body">
+    {% include 'header.html' %}
+
+    <h1>Language Detection</h1>
+
+    <section id="description-container">
+        <section id="description">
+            <table>
+                <tr>
+                    <td style="padding-right: 20px;" class="column1">
+                        <div>
+                            <h3>Enter your text:</h3>
+                            <form method="post" action="{% url 'get_language' %}">
+                                <textarea type="text" id="text-field" name="text-field" style="width: 500px; height: 200px;" rows="4" cols="50" wrap="soft"></textarea>
+                                <input class="button" type="submit" value="Detect language">
+                            </form>
+                        </div>
+                    </td>
+                    <td class="column2" style="padding-right: 40px;">
+                        <div id="description">
+                            <p>This is a simple sequential <span style="color: rgb(255, 160, 230)">neural network</span> trained on 29 texts from the udhr corpus (Universal Declaration of Human Rights). It is character-based and can detect one of 29 languages. <span style="color: rgb(255, 0, 0)">Click the button once and wait a few seconds.</span></p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </section>
+
+    {% include 'footer.html' %}
+
+    <!-- modal popup -->
+    <div id="result-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="result"></h2>
+        </div>
+    </div>
+
+    <script>
+        var modal = document.getElementById("result-modal");
+        var closeBtn = document.getElementsByClassName("close")[0];
+        var form = document.querySelector("form");
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        var language = JSON.parse(xhr.responseText).language;
+                        document.getElementById("result").textContent = language;
+                        modal.style.display = "block"; // Show the popup
+                    } else {
+                        console.log("Request failed with status: " + xhr.status);
+                    }
+                }
+            };
+
+            // ajax request
+            xhr.open("POST", "{% url 'get_language' %}");
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            var formData = new FormData(this);
+            xhr.send(formData);
+        });
+
+        // closing the popup if close button is clicked
+        closeBtn.onclick = function() {
+            modal.style.display = "    none";
+        };
+
+        // or when the user clicks outside the box
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+    </script>
+</body>
+</html>
+
